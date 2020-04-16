@@ -1,3 +1,5 @@
+import java.io.File;
+import java.util.Scanner;
 
 public class Simulation {
 	int[] programmspeicher = new int[1024];
@@ -7,4 +9,14 @@ public class Simulation {
 		
 	}
 
+	public void setProgrammspeicher(int[] programmspeicher) {
+		this.programmspeicher = programmspeicher;
+	}
+
+	
+	
+	
+	
+
 }
+	
