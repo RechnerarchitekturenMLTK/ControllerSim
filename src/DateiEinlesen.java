@@ -5,13 +5,13 @@ import java.util.Scanner;
 public class DateiEinlesen {
 	
 	public static void main(String[] args) throws FileNotFoundException{
-		File daten = new File("TPicSim1.LST");
+		File daten = new File("TPicSim7.LST");
 		
 		Scanner scan = new Scanner(daten);
 		while(scan.hasNextLine()) { //Prüft ob es eine nächste Zeile gibt, die noch nicht gelesen wurde
 			
-			String s1 = scan.nextLine();
-			char char0 = s1.charAt(0);
+			String s1 = scan.nextLine(); //
+			char char0 = s1.charAt(0); 
 			char char1 = s1.charAt(1);
 			char char2 = s1.charAt(2);
 			char char3 = s1.charAt(3);
