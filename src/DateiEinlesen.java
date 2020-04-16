@@ -21,6 +21,13 @@ public class DateiEinlesen {
 			char char7 = s1.charAt(8);
 			
 			String address0 = String.valueOf(char0);
+			String address1 = String.valueOf(char1);
+			String address2 = String.valueOf(char2);
+			String address3 = String.valueOf(char3);
+			
+			String address = address0+address1+address2+address3;
+			System.out.println(address);
+			
 			
 			
 		}
