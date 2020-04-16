@@ -24,9 +24,9 @@ public class DateiEinlesen {
 			String address1 = String.valueOf(char1);
 			String address2 = String.valueOf(char2);
 			String address3 = String.valueOf(char3);
-			String command0 = String.valueOf(char5);
-			String command1 = String.valueOf(char6);
-			String command2 = String.valueOf(char7);
+			String command0 = String.valueOf(char4);
+			String command1 = String.valueOf(char5);
+			String command2 = String.valueOf(char6);
 			String command3 = String.valueOf(char7);
 			
 			
