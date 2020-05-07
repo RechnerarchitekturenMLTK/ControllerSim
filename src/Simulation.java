@@ -3,60 +3,134 @@ import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 public class Simulation {
-	
-	public static void main(String[] args) throws FileNotFoundException{
-		int[] befehlsspeicher = new int[1024]; //Befehlsspeicher mit der Größe 1024.
-		int[] datenspeicher = new int[256]; //Datenspeicher mit der Größe 256.
-		File daten = new File("TPicSim1.LST"); //Eine manuell ausgewählte Datei wird dem Programm hinzugefügt.
-		
-		Scanner scan = new Scanner(daten);
-		while(scan.hasNextLine()) { //Prüft ob es eine nächste Zeile gibt, die noch nicht gelesen wurde
-			
-			String s1 = scan.nextLine(); //Schreibt die gesamte Zeile in String s1
-			if(s1.substring(0, 1).isBlank()) { /*Prüft ob an erster und zweiter Stelle kein Wert steht, falls ja, wird
-			 									der nächste While-Zyklus eingeleitet und die Nächste Zeile wird bearbeitet,
-			 									falls nein wird die else-Klammer ausgeführt	
-			 									*/
-				
-				
-			}else {
-				
-				char char0 = s1.charAt(0); //Speichert das Zeichen an Stelle (n) in char-Variable
-				char char1 = s1.charAt(1); 	
-				char char2 = s1.charAt(2); 
-				char char3 = s1.charAt(3); //Das vierte Zeichen wird ausgelassen, da es ein Leerzeichen ist. 
-				char char4 = s1.charAt(5); 
-				char char5 = s1.charAt(6); 
-				char char6 = s1.charAt(7); 
-				char char7 = s1.charAt(8); 
-				
-				String address0 = String.valueOf(char0); //Jede Char-Variable wird in einem eigenen String zugewiesen.
-				String address1 = String.valueOf(char1);
-				String address2 = String.valueOf(char2);
-				String address3 = String.valueOf(char3);
-				String command0 = String.valueOf(char4);
-				String command1 = String.valueOf(char5);
-				String value0 = String.valueOf(char6);
-				String value1 = String.valueOf(char7);
-				
-				
-				String address = address0+address1+address2+address3; //Die Strings mit jeweiligen Informationen werden zusammengeführt und einer neuen Variabel zugewiesen.
-				String command = command0+command1; 
-				String values = value0 + value1;
-				
-				
-					int index = Integer.parseInt(address,16); //Die Strings mit jeweiligen HEXA-Codes werden ins Dezimalsystem umgerechnet und entsprechenden Variablen zugewiesen.
-					int befehl = Integer.parseInt(command,16);
-					int data = Integer.parseInt(values, 16);
-					befehlsspeicher[index]=befehl; //Befehlsdaten werden in den Befehlsspeicher geladen, die Adresse gibt den Index an.
-					datenspeicher[index]=data; //Zahlenwerte werden in den Datenspeicher geladen, die Adresse gibt den Index an.
-					
-			}
-			
-		}
-		scan.close(); //Falls die while() bedingung oben nicht erfüllt, wird der Scanvorgang beendet.
-	}
-	
 
+	public static void main(String[] args) throws FileNotFoundException {
+		int[] befehlsspeicher = new int[1024]; // Befehlsspeicher mit der Größe 1024.
+		int[] datenspeicher = new int[256]; // Datenspeicher mit der Größe 256.
+		File daten = new File("TPicSim1.LST"); // Eine manuell ausgewählte Datei wird dem Programm hinzugefügt.
+
+		Scanner scan = new Scanner(daten);
+		while (scan.hasNextLine()) { // Prüft ob es eine nächste Zeile gibt, die noch nicht gelesen wurde
+
+			String s1 = scan.nextLine(); // Schreibt die gesamte Zeile in String s1
+			if (s1.substring(0, 1).isBlank()) { /*
+												 * Prüft ob an erster und zweiter Stelle kein Wert steht, falls ja, wird
+												 * der nächste While-Zyklus eingeleitet und die Nächste Zeile wird
+												 * bearbeitet, falls nein wird die else-Klammer ausgeführt
+												 */
+
+			} else {
+
+				String sAdresse = s1.substring(0,4);
+				String Adresse = ("0x" + sAdresse);	
+				int iAdresse = Integer.parseInt(sAdresse, 16);
+				String sBefehl = s1.substring(5,9);
+				String Befehl = ("0x" + sBefehl);
+				
+				
+				befehlsspeicher[iAdresse] = Befehl;
+			}
+
+		}
+		scan.close(); // Falls die while() bedingung oben nicht erfüllt, wird der Scanvorgang beendet.
+
+		for (int i = 0; i < befehlsspeicher.length; i++) {
+			int befehl = befehlsspeicher[i];
+			//if (befehl >= 0x11000000000000) and (befehl <= 0x11001111111111) {movlw} 
+			//nop 0x00 0000 0000 0000
+			   // 0x00 0000 0010 0000
+			   // 0x00 0000 0100 0000
+			    //0x00 0000 0110 0000
+			if (befehlsspeicher[i] == 1) { // CLRF
+				int operanden = datenspeicher[i];
+				
+			}
+			else if (befehlsspeicher[i] == 2) { // SUBWF
+
+			}
+			else if (befehlsspeicher[i] == 3) { // DECF
+
+			}
+			else if (befehlsspeicher[i] == 4) { // IORWF
+
+			}
+			else if (befehlsspeicher[i] == 5) { // ANDWF
+
+			}
+			else if (befehlsspeicher[i] == 6) { // XORWF
+
+			}
+			else if (befehlsspeicher[i] == 7) { // ADDWF
+
+			}
+			else if (befehlsspeicher[i] == 8) { // MOVF
+
+			}
+			else if (befehlsspeicher[i] == 9) { // COMF
+
+			}
+			else if (befehlsspeicher[i] == 10) { // INCF
+
+			}
+			else if (befehlsspeicher[i] == 11) { // DECFSZ
+
+			}
+			else if (befehlsspeicher[i] == 12) { // RRF
+
+			}
+			else if (befehlsspeicher[i] == 13) { // RLF
+
+			}
+			else if (befehlsspeicher[i] == 14) { // SWAPF
+
+			}
+			else if (befehlsspeicher[i] == 15) { // INCFSZ
+
+			}
+			else if (befehlsspeicher[i] == 16) { // BCF
+
+			}
+			else if (befehlsspeicher[i] == 23) { // BSF
+
+			}
+			else if (befehlsspeicher[i] == 24) { // BTFSC
+
+			}
+			else if (befehlsspeicher[i] == 29) { // BTFSS
+
+			}
+			else if (befehlsspeicher[i] == 32) { // CALL
+
+			}
+			else if (befehlsspeicher[i] == 40) { // GOTO
+
+			}
+			else if (befehlsspeicher[i] == 48) { // MOVLW
+
+			}
+			else if (befehlsspeicher[i] == 52) { // RETLW
+
+			}
+			else if (befehlsspeicher[i] == 56) { // IORLW
+
+			}
+			else if (befehlsspeicher[i] == 57) { // ANDLW
+
+			}
+			else if (befehlsspeicher[i] == 58) { // XORLW
+
+			}
+			else if (befehlsspeicher[i] == 60) { // SUBLW
+
+			}
+			else if (befehlsspeicher[i] == 62) { // ANDLW
+
+			}
+			else {
+				
+			}
+
+		}
+	}
 
 }
