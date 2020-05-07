@@ -25,18 +25,35 @@ public class Simulation {
 				String Adresse = ("0x" + sAdresse);	
 				int iAdresse = Integer.parseInt(sAdresse, 16);
 				String sBefehl = s1.substring(5,9);
-				String Befehl = ("0x" + sBefehl);
+				int Befehl = Integer.parseInt(sBefehl, 16);
+				String s = "";
+				while(Befehl > 0) {
+					int temp = (Befehl & 1);
+					if(temp != 0) {
+						s = "1" + s;
+					}
+					else {
+						s = "0" + s;
+						
+						
+					}Befehl >>= 1;
+				}
 				
-				
+				//System.out.println(s);
+				Befehl = Integer.parseInt(s);
 				befehlsspeicher[iAdresse] = Befehl;
 			}
 
 		}
 		scan.close(); // Falls die while() bedingung oben nicht erfüllt, wird der Scanvorgang beendet.
 
+		System.out.println(befehlsspeicher[0]);
 		for (int i = 0; i < befehlsspeicher.length; i++) {
 			int befehl = befehlsspeicher[i];
-			//if (befehl >= 0x11000000000000) and (befehl <= 0x11001111111111) {movlw} 
+			
+			//if ((befehl >= 0x11000000000000) && (befehl <= 0x11001111111111)) {
+				//System.out.println("movlw");
+				//} 
 			//nop 0x00 0000 0000 0000
 			   // 0x00 0000 0010 0000
 			   // 0x00 0000 0100 0000
