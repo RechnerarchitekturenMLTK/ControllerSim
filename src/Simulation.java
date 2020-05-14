@@ -7,7 +7,7 @@ public class Simulation {
 	public static void main(String[] args) throws FileNotFoundException {
 		long[] befehlsspeicher = new long[1024]; // Befehlsspeicher mit der Größe 1024.
 		int[] datenspeicher = new int[256]; // Datenspeicher mit der Größe 256.
-		File daten = new File("TPicSim101.LST"); // Eine manuell ausgewählte Datei wird dem Programm hinzugefügt.
+		File daten = new File("TPicSim3.LST"); // Eine manuell ausgewählte Datei wird dem Programm hinzugefügt.
 
 		Scanner scan = new Scanner(daten);
 		int zaehler = 0;
@@ -69,8 +69,10 @@ public class Simulation {
 				System.out.println("nop");
 			} else if ((befehl >= 10000000L) && (befehl <= 11111111L)) {
 				System.out.println("movwf");
-			} else if ((befehl >= 100000000L) && (befehl <= 111111111L)) {
+			} else if ((befehl >= 110000000L) && (befehl <= 111111111L)) {
 				System.out.println("clrf");
+			} else if ((befehl >= 100000000L) && (befehl <= 101111111L)) {
+				System.out.println("clrw");
 			} else if ((befehl >= 1000000000L) && (befehl <= 1011111111L)) {
 				System.out.println("subwf");
 			} else if ((befehl >= 1100000000L) && (befehl <= 1111111111L)) {
@@ -125,8 +127,6 @@ public class Simulation {
 				System.out.println("addlw");
 			} else if (befehl == 1000L) {
 				System.out.println("return");
-			} else if ((befehl >= 100000000L) && (befehl <= 101111111L)) {
-				System.out.println("clrw");
 			} else if (befehl == 1100100L) {
 				System.out.println("clrwdt");
 			} else if (befehl == 1001L) {
