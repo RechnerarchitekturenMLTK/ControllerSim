@@ -7,8 +7,16 @@ public class Simulation {
 	public static void main(String[] args) throws FileNotFoundException {
 		long[] befehlsspeicher = new long[1024]; // Befehlsspeicher mit der Größe 1024.
 		int[] datenspeicher = new int[256]; // Datenspeicher mit der Größe 256.
-		File daten = new File("TPicSim3.LST"); // Eine manuell ausgewählte Datei wird dem Programm hinzugefügt.
-
+		
+		File changeDat = new File("gui_change.dat");
+		while(!changeDat.exists()) { //Prüft solange bis gui_change.dat vorhanden ist.
+			
+		}
+		Scanner pfad = new Scanner(changeDat); 
+		String path = pfad.nextLine();
+		pfad.close(); 
+		File daten = new File(path); // Eine manuell ausgewählte Datei wird dem Programm hinzugefügt.
+		
 		Scanner scan = new Scanner(daten);
 		int zaehler = 0;
 		while (scan.hasNextLine()) { // Prüft ob es eine nächste Zeile gibt, die noch nicht gelesen wurde
