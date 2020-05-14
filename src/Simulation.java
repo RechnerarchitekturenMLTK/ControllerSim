@@ -10,6 +10,7 @@ public class Simulation {
 		File daten = new File("TPicSim2.LST"); // Eine manuell ausgewählte Datei wird dem Programm hinzugefügt.
 
 		Scanner scan = new Scanner(daten);
+		int zaehler = 0;
 		while (scan.hasNextLine()) { // Prüft ob es eine nächste Zeile gibt, die noch nicht gelesen wurde
 
 			String s1 = scan.nextLine(); // Schreibt die gesamte Zeile in String s1
@@ -52,14 +53,13 @@ public class Simulation {
 					}
 					counter++;
 				}
-				// System.out.println(s);
-				// Befehl = Integer.parseInt(s);
+				befehlsspeicher[zaehler] = Befehl;
+				zaehler++;
 			}
-
+			
 		}
 		scan.close(); // Falls die while() bedingung oben nicht erfüllt, wird der Scanvorgang beendet.
 
-		System.out.println(befehlsspeicher[7]);
 		for (int i = 0; i < befehlsspeicher.length; i++) {
 			long befehl = befehlsspeicher[i];
 
@@ -67,11 +67,11 @@ public class Simulation {
 				System.out.println("movlw");
 			}
 
-			else if ((befehl == 0) || (befehl == 100000L) ||
-			(befehl == 1000000L)
-			|| (befehl == 1100000L)) {
-			System.out.println("nop");
-			}
+			//else if ((befehl == 0) || (befehl == 100000L) ||
+			//(befehl == 1000000L)
+			//|| (befehl == 1100000L)) {
+			//System.out.println("nop");
+			//}
 
 			// else if (befehlsspeicher[i] == 1) { // CLRF
 			// int operanden = datenspeicher[i];
@@ -135,7 +135,7 @@ public class Simulation {
 				System.out.println("call");
 			} else if ((befehl >= 10100000000000L) && (befehl <= 10111111111111L)) {
 				System.out.println("goto");
-			} else if ((befehl >= 11010000000000L) && (befehl <= 11011111111111L)) { // RETLW
+			} else if ((befehl >= 11010000000000L) && (befehl <= 11011111111111L)) {
 				System.out.println("retlw");
 			} else if ((befehl >= 11100000000000L) && (befehl <= 11100011111111L)) {
 				System.out.println("iorlw");
