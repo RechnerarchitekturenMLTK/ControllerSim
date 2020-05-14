@@ -7,7 +7,7 @@ public class Simulation {
 	public static void main(String[] args) throws FileNotFoundException {
 		long[] befehlsspeicher = new long[1024]; // Befehlsspeicher mit der Größe 1024.
 		int[] datenspeicher = new int[256]; // Datenspeicher mit der Größe 256.
-		File daten = new File("TPicSim2.LST"); // Eine manuell ausgewählte Datei wird dem Programm hinzugefügt.
+		File daten = new File("TPicSim1.LST"); // Eine manuell ausgewählte Datei wird dem Programm hinzugefügt.
 
 		Scanner scan = new Scanner(daten);
 		int zaehler = 0;
@@ -56,7 +56,7 @@ public class Simulation {
 				befehlsspeicher[zaehler] = Befehl;
 				zaehler++;
 			}
-			
+
 		}
 		scan.close(); // Falls die while() bedingung oben nicht erfüllt, wird der Scanvorgang beendet.
 
@@ -67,71 +67,51 @@ public class Simulation {
 				System.out.println("movlw");
 			}
 
-			//else if ((befehl == 0) || (befehl == 100000L) ||
-			//(befehl == 1000000L)
-			//|| (befehl == 1100000L)) {
-			//System.out.println("nop");
-			//}
+			else if ((befehl == 0) || (befehl == 100000L) ||
+			(befehl == 1000000L)
+			|| (befehl == 1100000L)) {
+			System.out.println("nop");
+			}
 
-			// else if (befehlsspeicher[i] == 1) { // CLRF
-			// int operanden = datenspeicher[i];
-
-			// }
-			// else if (befehlsspeicher[i] == 2) { // SUBWF
-
-			// }
-			// else if (befehlsspeicher[i] == 3) { // DECF
-
-			// }
-			// else if (befehlsspeicher[i] == 4) { // IORWF
-
-			// }
-			// else if (befehlsspeicher[i] == 5) { // ANDWF
-
-			// }
-			// else if (befehlsspeicher[i] == 6) { // XORWF
-
-			// }
-			// else if (befehlsspeicher[i] == 7) { // ADDWF
-
-			// }
-			// else if (befehlsspeicher[i] == 8) { // MOVF
-
-			// }
-			// else if (befehlsspeicher[i] == 9) { // COMF
-
-			// }
-			// else if (befehlsspeicher[i] == 10) { // INCF
-
-			// }
-			// else if (befehlsspeicher[i] == 11) { // DECFSZ
-
-			// }
-			// else if (befehlsspeicher[i] == 12) { // RRF
-
-			// }
-			// else if (befehlsspeicher[i] == 13) { // RLF
-
-			// }
-			// else if (befehlsspeicher[i] == 14) { // SWAPF
-
-			// }
-			// else if (befehlsspeicher[i] == 15) { // INCFSZ
-
-			// }
-			// else if (befehlsspeicher[i] == 16) { // BCF
-
-			// }
-			// else if (befehlsspeicher[i] == 23) { // BSF
-
-			// }
-			// else if (befehlsspeicher[i] == 24) { // BTFSC
-
-			// }
-			// else if (befehlsspeicher[i] == 29) { // BTFSS
-
-			// }
-			else if ((befehl >= 10000000000000L) && (befehl <= 10011111111111L)) {
+			else if ((befehl >= 100000000L) && (befehl <= 111111111L)) {
+				System.out.println("clrf");
+			} else if ((befehl >= 1000000000L) && (befehl <= 1011111111L)) {
+				System.out.println("subwf");
+			} else if ((befehl >= 1100000000L) && (befehl <= 1111111111L)) {
+				System.out.println("decf");
+			} else if ((befehl >= 10000000000L) && (befehl <= 10011111111L)) {
+				System.out.println("iorwf");
+			} else if ((befehl >= 10100000000L) && (befehl <= 10111111111L)) {
+				System.out.println("andwf");
+			} else if ((befehl >= 11000000000L) && (befehl <= 11011111111L)) {
+				System.out.println("xorwf");
+			} else if ((befehl >= 11100000000L) && (befehl <= 11111111111L)) {
+				System.out.println("addwf");
+			} else if ((befehl >= 100000000000L) && (befehl <= 100011111111L)) {
+				System.out.println("movf");
+			} else if ((befehl >= 100100000000L) && (befehl <= 100111111111L)) {
+				System.out.println("comf");
+			} else if ((befehl >= 101000000000L) && (befehl <= 101011111111L)) {
+				System.out.println("incf");
+			} else if ((befehl >= 101100000000L) && (befehl <= 101111111111L)) {
+				System.out.println("decfsz");
+			} else if ((befehl >= 110000000000L) && (befehl <= 110011111111L)) {
+				System.out.println("rrf");
+			} else if ((befehl >= 110100000000L) && (befehl <= 110111111111L)) {
+				System.out.println("rlf");
+			} else if ((befehl >= 111000000000L) && (befehl <= 111011111111L)) {
+				System.out.println("swapf");
+			} else if ((befehl >= 111100000000L) && (befehl <= 111111111111L)) {
+				System.out.println("incfsz");
+			} else if ((befehl >= 1000000000000L) && (befehl <= 1001111111111L)) {
+				System.out.println("bcf");
+			} else if ((befehl >= 1010000000000L) && (befehl <= 1011111111111L)) {
+				System.out.println("bsf");
+			} else if ((befehl >= 1100000000000L) && (befehl <= 1101111111111L)) {
+				System.out.println("btfsc");
+			} else if ((befehl >= 1110000000000L) && (befehl <= 1111111111111L)) {
+				System.out.println("btfss");
+			} else if ((befehl >= 10000000000000L) && (befehl <= 10011111111111L)) {
 				System.out.println("call");
 			} else if ((befehl >= 10100000000000L) && (befehl <= 10111111111111L)) {
 				System.out.println("goto");
