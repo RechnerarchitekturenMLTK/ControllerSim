@@ -5,6 +5,8 @@ import java.util.Scanner;
 public class Simulation {
 
 	public static void main(String[] args) throws FileNotFoundException {
+		
+		long wRegister = 0;
 		long[] befehlsspeicher = new long[1024]; // Befehlsspeicher mit der Größe 1024.
 		int[] datenspeicher = new int[256]; // Datenspeicher mit der Größe 256.
 		
@@ -73,7 +75,12 @@ public class Simulation {
 			long befehl = befehlsspeicher[i];
 
 			if ((befehl >= 11000000000000L) && (befehl <= 11001111111111L)) {
-				System.out.println("movlw");
+				String kString = "";
+				long k = 0;
+				kString = getLiterals(befehl, 8);
+				k = Integer.parseInt(kString, 2);
+				wRegister = k;
+				System.out.println("movlw: " + wRegister);
 			} else if ((befehl == 0L) || (befehl == 100000L) || (befehl == 1000000L) || (befehl == 1100000L)) {
 				System.out.println("nop");
 			} else if ((befehl >= 10000000L) && (befehl <= 11111111L)) {
@@ -127,13 +134,26 @@ public class Simulation {
 			} else if ((befehl >= 11100000000000L) && (befehl <= 11100011111111L)) {
 				System.out.println("iorlw");
 			} else if ((befehl >= 11100100000000L) && (befehl <= 11100111111111L)) {
-				System.out.println("andlw");
+				String kString = getLiterals(befehl, 8);
+				long k = Long.parseLong(kString);
+				long temp = wRegister;
+				String wString = Long.toBinaryString(temp);
+				temp = Long.parseLong(wString);
+				long result = (k & temp);
+				String sResult = Long.toString(result);
+				wRegister = Integer.parseInt(sResult);
+				System.out.println("andlw: " + wRegister);
 			} else if ((befehl >= 11101000000000L) && (befehl <= 11101011111111L)) {
 				System.out.println("xorlw");
 			} else if ((befehl >= 11110000000000L) && (befehl <= 11110111111111L)) {
 				System.out.println("sublw");
 			} else if ((befehl >= 11111000000000L) && (befehl <= 11111111111111L)) {
-				System.out.println("addlw");
+				String kString = "";
+				long k = 0;
+				kString = getLiterals(befehl, 8);
+				k = Integer.parseInt(kString, 2);
+				wRegister = wRegister + k;
+				System.out.println("addlw: " + wRegister);
 			} else if (befehl == 1000L) {
 				System.out.println("return");
 			} else if (befehl == 1100100L) {
@@ -146,4 +166,18 @@ public class Simulation {
 		}
 	}
 
+	public static String getLiterals(long binary, int length) {
+		String kString = "" + binary;
+		long kArray[] = new long[kString.length()];
+		String sLiteral = "";
+		for(int j = 6; j <= kString.length(); j++) {
+			if(j != kString.length()) {
+				kArray[j] = Long.parseLong(kString.substring(j, j + 1));
+				sLiteral = sLiteral + kArray[j];
+			}
+		}
+		return sLiteral;
+	}
 }
+
+
