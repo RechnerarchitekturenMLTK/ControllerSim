@@ -15,7 +15,7 @@ public class Simulation {
 		}
 		Scanner pfad = new Scanner(changeDat); 
 		String path = pfad.nextLine();
-		pfad.close(); //close scanner
+		pfad.close(); 
 		changeDat.delete();
 		File daten = new File(path); // Eine manuell ausgewählte Datei wird dem Programm hinzugefügt.
 		
