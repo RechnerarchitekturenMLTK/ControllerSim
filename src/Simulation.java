@@ -3,12 +3,17 @@ import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 public class Simulation {
+	static long[] stack = new long[8];
+	static int stPointer;
 
 	public static void main(String[] args) throws FileNotFoundException {
 		long wRegister = 0;
 		long[] befehlsspeicher = new long[1024]; // Befehlsspeicher mit der Größe 1024.
 		int[] datenspeicher = new int[256]; // Datenspeicher mit der Größe 256.
 		
+		for(int i=0; i<8;i++) {
+			stack[i]=-1;
+		}
 		File changeDat = new File("gui_change.dat");
 		while(!changeDat.exists()) { //Prüft solange bis gui_change.dat vorhanden ist.
 			
@@ -125,17 +130,31 @@ public class Simulation {
 			} else if ((befehl >= 1110000000000L) && (befehl <= 1111111111111L)) {
 				System.out.println("btfss");
 			} else if ((befehl >= 10000000000000L) && (befehl <= 10011111111111L)) {
-				System.out.println("call");
+					stPointer = push(i+1,stPointer);
+					stPointer++;
+					String kString = getLiterals(befehl,11);
+					int literals = Integer.parseInt(kString,2);
+					i=literals;
+					i--;
+					System.out.println("call: "+literals);
+				
 			} else if ((befehl >= 10100000000000L) && (befehl <= 10111111111111L)) {
 				String kString = getLiterals(befehl,10);
 				int dec = Integer.parseInt(kString,2);
-				System.out.println("goto: " + dec);
-				long tempBefehl = Long.parseLong(kString, 2);
-				if(dec == tempBefehl) {
+				if(i==dec) {
+					System.out.println("GOTO ENDE");
 					break;
 				}
+				i=dec-1;
+				System.out.println("goto: " + dec);
 			} else if ((befehl >= 11010000000000L) && (befehl <= 11011111111111L)) {
-				System.out.println("retlw");
+				String kString = getLiterals(befehl,8);
+				int dec = Integer.parseInt(kString,2);
+				wRegister = dec;
+				stPointer--;
+				i = pop(stPointer);
+				i--;
+				System.out.println("retlw: "+wRegister);
 			} else if ((befehl >= 11100000000000L) && (befehl <= 11100011111111L)) {
 				String kString = getLiterals(befehl,8);
 				long dec = Long.parseLong(kString, 2);
@@ -162,7 +181,10 @@ public class Simulation {
 				wRegister = wRegister + dec;
 				System.out.println("addlw: " + wRegister);
 			} else if (befehl == 1000L) {
-				System.out.println("return");
+				stPointer--;
+				i = pop(stPointer);
+				i--;
+				System.out.println("return: "+i);
 			} else if (befehl == 1100100L) {
 				System.out.println("clrwdt");
 			} else if (befehl == 1001L) {
@@ -184,6 +206,18 @@ public class Simulation {
 			}
 		}
 		return sLiteral;
+	}
+	public static int push(long adresse, int pointer) {
+		if(pointer>7) {
+			pointer=0;
+		}
+		stack[pointer]=adresse;
+		return pointer;
+	}
+	public static int pop(int pointer) {
+		int index = (int) stack[pointer];
+		stack[pointer]=-1;
+		return index;
 	}
 }
 
