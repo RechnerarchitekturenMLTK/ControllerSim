@@ -5,7 +5,6 @@ import java.util.Scanner;
 public class Simulation {
 
 	public static void main(String[] args) throws FileNotFoundException {
-		
 		long wRegister = 0;
 		long[] befehlsspeicher = new long[1024]; // Befehlsspeicher mit der Größe 1024.
 		int[] datenspeicher = new int[256]; // Datenspeicher mit der Größe 256.
@@ -67,7 +66,7 @@ public class Simulation {
 				befehlsspeicher[zaehler] = Befehl;
 				zaehler++;
 			}
-
+ 
 		}
 		scan.close(); // Falls die while() bedingung oben nicht erfüllt, wird der Scanvorgang beendet.
 
@@ -94,7 +93,7 @@ public class Simulation {
 			} else if ((befehl >= 1100000000L) && (befehl <= 1111111111L)) {
 				System.out.println("decf");
 			} else if ((befehl >= 10000000000L) && (befehl <= 10011111111L)) {
-				System.out.println("iorwf");
+				System.out.println("iorwf: "+ wRegister);
 			} else if ((befehl >= 10100000000L) && (befehl <= 10111111111L)) {
 				System.out.println("andwf");
 			} else if ((befehl >= 11000000000L) && (befehl <= 11011111111L)) {
@@ -128,31 +127,39 @@ public class Simulation {
 			} else if ((befehl >= 10000000000000L) && (befehl <= 10011111111111L)) {
 				System.out.println("call");
 			} else if ((befehl >= 10100000000000L) && (befehl <= 10111111111111L)) {
-				System.out.println("goto");
+				String kString = getLiterals(befehl,10);
+				int dec = Integer.parseInt(kString,2);
+				System.out.println("goto: " + dec);
+				long tempBefehl = Long.parseLong(kString, 2);
+				if(dec == tempBefehl) {
+					break;
+				}
 			} else if ((befehl >= 11010000000000L) && (befehl <= 11011111111111L)) {
 				System.out.println("retlw");
 			} else if ((befehl >= 11100000000000L) && (befehl <= 11100011111111L)) {
-				System.out.println("iorlw");
+				String kString = getLiterals(befehl,8);
+				long dec = Long.parseLong(kString, 2);
+				wRegister = (dec|wRegister);
+				System.out.println("iorlw: " + wRegister);
 			} else if ((befehl >= 11100100000000L) && (befehl <= 11100111111111L)) {
 				String kString = getLiterals(befehl, 8);
-				long k = Long.parseLong(kString);
-				long temp = wRegister;
-				String wString = Long.toBinaryString(temp);
-				temp = Long.parseLong(wString);
-				long result = (k & temp);
-				String sResult = Long.toString(result);
-				wRegister = Integer.parseInt(sResult);
+				long dec = Long.parseLong(kString, 2);
+				wRegister = (dec & wRegister);
 				System.out.println("andlw: " + wRegister);
 			} else if ((befehl >= 11101000000000L) && (befehl <= 11101011111111L)) {
-				System.out.println("xorlw");
+				String kString = getLiterals(befehl,8);
+				long dec = Long.parseLong(kString, 2);
+				wRegister = (dec^wRegister);
+				System.out.println("xorlw: " + wRegister);
 			} else if ((befehl >= 11110000000000L) && (befehl <= 11110111111111L)) {
-				System.out.println("sublw");
+				String kString = getLiterals(befehl,8);
+				long dec = Long.parseLong(kString, 2);
+				wRegister = dec - wRegister;
+				System.out.println("sublw: " + wRegister);
 			} else if ((befehl >= 11111000000000L) && (befehl <= 11111111111111L)) {
-				String kString = "";
-				long k = 0;
-				kString = getLiterals(befehl, 8);
-				k = Integer.parseInt(kString, 2);
-				wRegister = wRegister + k;
+				String kString = getLiterals(befehl, 8);
+				long dec = Long.parseLong(kString, 2);
+				wRegister = wRegister + dec;
 				System.out.println("addlw: " + wRegister);
 			} else if (befehl == 1000L) {
 				System.out.println("return");

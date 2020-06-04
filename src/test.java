@@ -2,18 +2,13 @@
 public class test {
 
 	public static void main(String[] args) {
-		long wRegister = 17;
-		long befehl = 11100100110000L;
+		long wRegister = 32; //111001 0011 0000‬
+		long befehl = 11101000100000l; //11 0000 0001 0001‬
 		
-		String kString = getLiterals(befehl, 8);
-		long k = Long.parseLong(kString);
-		long temp = wRegister;
-		String wString = Long.toBinaryString(temp);
-		temp = Long.parseLong(wString);
-		long result = (k & temp);
-		String sResult = Long.toString(result);
-		wRegister = Integer.parseInt(sResult);
-		System.out.println("andlw: " + wRegister);
+		String kString = "" + getLiterals(befehl, 8);
+		long k = Integer.parseInt(kString, 2);
+		wRegister = wRegister + k;
+		System.out.println("addlw: " + wRegister);
 	}
 	
 	public static String getLiterals(long binary, int length) {
