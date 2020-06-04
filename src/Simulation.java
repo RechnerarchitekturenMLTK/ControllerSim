@@ -134,7 +134,7 @@ public class Simulation {
 			} else if ((befehl >= 11100000000000L) && (befehl <= 11100011111111L)) {
 				System.out.println("iorlw");
 			} else if ((befehl >= 11100100000000L) && (befehl <= 11100111111111L)) {
-				String kString = getLiterals(befehl, 8);
+				/*String kString = getLiterals(befehl, 8);
 				long k = Long.parseLong(kString);
 				long temp = wRegister;
 				String wString = Long.toBinaryString(temp);
@@ -142,7 +142,7 @@ public class Simulation {
 				long result = (k & temp);
 				String sResult = Long.toString(result);
 				wRegister = Integer.parseInt(sResult);
-				System.out.println("andlw: " + wRegister);
+				System.out.println("andlw: " + wRegister);*/
 			} else if ((befehl >= 11101000000000L) && (befehl <= 11101011111111L)) {
 				System.out.println("xorlw");
 			} else if ((befehl >= 11110000000000L) && (befehl <= 11110111111111L)) {
