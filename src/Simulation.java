@@ -79,7 +79,7 @@ public class Simulation {
 				kString = getLiterals(befehl, 8);
 				k = Integer.parseInt(kString, 2);
 				wRegister = k;
-				System.out.println("movlw: " + wRegister); 
+				System.out.println("movlw: " + wRegister); //MOVLW
 			} else if ((befehl == 0L) || (befehl == 100000L) || (befehl == 1000000L) || (befehl == 1100000L)) {
 				System.out.println("nop");
 			} else if ((befehl >= 10000000L) && (befehl <= 11111111L)) {
