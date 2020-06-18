@@ -88,7 +88,10 @@ public class Simulation {
 			} else if ((befehl == 0L) || (befehl == 100000L) || (befehl == 1000000L) || (befehl == 1100000L)) {
 				System.out.println("nop");
 			} else if ((befehl >= 10000000L) && (befehl <= 11111111L)) {
-				System.out.println("movwf");
+				kString = getLiterals(befehl, 7);
+					System.out.println("movwf: " + wert1);
+				
+				System.out.println("movwf: " + );
 			} else if ((befehl >= 110000000L) && (befehl <= 111111111L)) {
 				System.out.println("clrf");
 			} else if ((befehl >= 100000000L) && (befehl <= 101111111L)) {
@@ -199,26 +202,26 @@ public class Simulation {
 		String kString = "" + binary;
 		long kArray[] = new long[kString.length()];
 		String sLiteral = "";
-		for(int j = 6; j <= kString.length(); j++) {
-			if(j != kString.length()) {
+		for (int j = 6; j <= kString.length(); j++) {
+			if (j != kString.length()) {
 				kArray[j] = Long.parseLong(kString.substring(j, j + 1));
 				sLiteral = sLiteral + kArray[j];
 			}
 		}
 		return sLiteral;
 	}
+
 	public static int push(long adresse, int pointer) {
-		if(pointer>7) {
-			pointer=0;
+		if (pointer > 7) {
+			pointer = 0;
 		}
-		stack[pointer]=adresse;
+		stack[pointer] = adresse;
 		return pointer;
 	}
+
 	public static int pop(int pointer) {
 		int index = (int) stack[pointer];
-		stack[pointer]=-1;
+		stack[pointer] = -1;
 		return index;
 	}
 }
-
-
