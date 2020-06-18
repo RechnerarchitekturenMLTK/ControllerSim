@@ -100,7 +100,8 @@ public class Simulation {
 				zBit = 1;
 				System.out.println("clrf " + datenspeicher[dec] + " Zbit: " + zBit);
 			} else if ((befehl >= 100000000L) && (befehl <= 101111111L)) {
-				System.out.println("clrw");
+				wRegister = 0;
+				System.out.println("clrw (wRegister) " + wRegister);
 			} else if ((befehl >= 1000000000L) && (befehl <= 1011111111L)) {
 				String kString = getLiterals(befehl, 7);
 				int dec = Integer.parseInt(kString, 2);
@@ -132,7 +133,18 @@ public class Simulation {
 					System.out.println("decf (f-register) " + datenspeicher[dec]);
 				}
 			} else if ((befehl >= 10000000000L) && (befehl <= 10011111111L)) {
-				System.out.println("iorwf: " + wRegister);
+				String kString = getLiterals(befehl, 7);
+				int dec = Integer.parseInt(kString, 2);
+				String dBit = getDBit(befehl, 7); // Hole siebtes Element aus var befehl
+				int destBit = Integer.parseInt(dBit, 2);
+				if (destBit == 0) {
+					wRegister = wRegister | datenspeicher[dec];
+					System.out.println("iorwf (wRegister) " + wRegister);
+				}
+				if (destBit == 1) {
+					datenspeicher[dec] = wRegister | datenspeicher[dec];
+					System.out.println("iorwf (f-register) " + datenspeicher[dec]);
+				}
 			} else if ((befehl >= 10100000000L) && (befehl <= 10111111111L)) {
 				String kString = getLiterals(befehl, 7);
 				int dec = Integer.parseInt(kString, 2);
@@ -147,7 +159,18 @@ public class Simulation {
 					System.out.println("andwf (f-register) " + datenspeicher[dec]);
 				}
 			} else if ((befehl >= 11000000000L) && (befehl <= 11011111111L)) {
-				System.out.println("xorwf");
+				String kString = getLiterals(befehl, 7);
+				int dec = Integer.parseInt(kString, 2);
+				String dBit = getDBit(befehl, 7); // Hole siebtes Element aus var befehl
+				int destBit = Integer.parseInt(dBit, 2);
+				if (destBit == 0) {
+					wRegister = (wRegister ^ datenspeicher[dec]);
+					System.out.println("xorwf (w-Register) " + wRegister);
+				}
+				if (destBit == 1) {
+					datenspeicher[dec] = (wRegister ^ datenspeicher[dec]);
+					System.out.println("xorwf (f-register) " + datenspeicher[dec]);
+				}
 			} else if ((befehl >= 11100000000L) && (befehl <= 11111111111L)) {
 				String kString = getLiterals(befehl, 7);
 				int dec = Integer.parseInt(kString, 2);
