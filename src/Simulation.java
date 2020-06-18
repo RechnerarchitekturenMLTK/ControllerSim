@@ -9,7 +9,8 @@ public class Simulation {
 	public static void main(String[] args) throws FileNotFoundException {
 		long wRegister = 0;
 		long[] befehlsspeicher = new long[1024]; // Befehlsspeicher mit der Größe 1024.
-		int[] datenspeicher = new int[256]; // Datenspeicher mit der Größe 256.
+		long[] datenspeicher = new long[256]; // Datenspeicher mit der Größe 256.
+		int zBit = 0;
 		
 		for(int i=0; i<8;i++) {
 			stack[i]=-1;
@@ -88,32 +89,136 @@ public class Simulation {
 			} else if ((befehl == 0L) || (befehl == 100000L) || (befehl == 1000000L) || (befehl == 1100000L)) {
 				System.out.println("nop");
 			} else if ((befehl >= 10000000L) && (befehl <= 11111111L)) {
-				kString = getLiterals(befehl, 7);
-					System.out.println("movwf: " + wert1);
-				
-				System.out.println("movwf: " + );
+				String kString = getLiterals(befehl, 7);
+				int dec = Integer.parseInt(kString, 2);
+				datenspeicher[dec] = wRegister;
+				System.out.println("movwf: " + datenspeicher[dec]);
 			} else if ((befehl >= 110000000L) && (befehl <= 111111111L)) {
-				System.out.println("clrf");
+				String kString = getLiterals(befehl, 7);
+				int dec = Integer.parseInt(kString, 2);
+				datenspeicher[dec] = 0;
+				zBit = 1;
+				System.out.println("clrf " + datenspeicher[dec] + " Zbit: " + zBit);
 			} else if ((befehl >= 100000000L) && (befehl <= 101111111L)) {
 				System.out.println("clrw");
 			} else if ((befehl >= 1000000000L) && (befehl <= 1011111111L)) {
-				System.out.println("subwf");
+				String kString = getLiterals(befehl, 7);
+				int dec = Integer.parseInt(kString, 2);
+				String dBit = getDBit(befehl, 7); //Hole siebtes Element aus var befehl
+				int destBit = Integer.parseInt(dBit, 2);
+				if(destBit == 0)
+				{
+					long temp = datenspeicher[dec]-wRegister;
+					wRegister = Math.floorMod(temp,256);
+					System.out.println("subwf (wRegister) " + wRegister);
+				}
+				if(destBit == 1)
+				{
+					long temp = datenspeicher[dec]-wRegister;
+					datenspeicher[dec] = Math.floorMod(temp,256);
+					System.out.println("subwf (f-register) " + datenspeicher[dec]);
+				}
 			} else if ((befehl >= 1100000000L) && (befehl <= 1111111111L)) {
-				System.out.println("decf");
+				String kString = getLiterals(befehl, 7);
+				int dec = Integer.parseInt(kString, 2);
+				String dBit = getDBit(befehl, 7); //Hole siebtes Element aus var befehl
+				int destBit = Integer.parseInt(dBit, 2);
+				if(destBit == 0)
+				{
+					long temp = datenspeicher[dec] - 1;
+					wRegister = Math.floorMod(temp,256);
+					System.out.println("decf (w-Register) " + wRegister);
+				}
+				if(destBit == 1)
+				{
+					long temp = datenspeicher[dec] - 1;
+					datenspeicher[dec] = Math.floorMod(temp,256);
+					System.out.println("decf (f-register) " + datenspeicher[dec]);
+				}
 			} else if ((befehl >= 10000000000L) && (befehl <= 10011111111L)) {
 				System.out.println("iorwf: "+ wRegister);
 			} else if ((befehl >= 10100000000L) && (befehl <= 10111111111L)) {
-				System.out.println("andwf");
+				String kString = getLiterals(befehl, 7);
+				int dec = Integer.parseInt(kString, 2);
+				String dBit = getDBit(befehl, 7); //Hole siebtes Element aus var befehl
+				int destBit = Integer.parseInt(dBit, 2);
+				if(destBit == 0)
+				{
+					wRegister = wRegister & datenspeicher[dec];
+					System.out.println("andwf (wRegister) " + wRegister);
+				}
+				if(destBit == 1)
+				{
+					datenspeicher[dec] = wRegister & datenspeicher[dec];
+					System.out.println("andwf (f-register) " + datenspeicher[dec]);
+				}
 			} else if ((befehl >= 11000000000L) && (befehl <= 11011111111L)) {
 				System.out.println("xorwf");
 			} else if ((befehl >= 11100000000L) && (befehl <= 11111111111L)) {
-				System.out.println("addwf");
+				String kString = getLiterals(befehl, 7);
+				int dec = Integer.parseInt(kString, 2);
+				String dBit = getDBit(befehl, 7); //Hole siebtes Element aus var befehl
+				int destBit = Integer.parseInt(dBit, 2);
+				if(destBit == 0)
+				{
+					wRegister = wRegister + datenspeicher[dec];
+					System.out.println("addwf (w-Register) " + wRegister);
+				}
+				if(destBit == 1)
+				{
+					datenspeicher[dec] = wRegister + datenspeicher[dec];
+					System.out.println("addwf (f-register) " + datenspeicher[dec]);
+				}
 			} else if ((befehl >= 100000000000L) && (befehl <= 100011111111L)) {
-				System.out.println("movf");
+				String kString = getLiterals(befehl, 7);
+				int dec = Integer.parseInt(kString, 2);
+				String dBit = getDBit(befehl, 7); //Hole siebtes Element aus var befehl
+				int destBit = Integer.parseInt(dBit, 2);
+				if(destBit == 0)
+				{
+					wRegister = datenspeicher[dec];
+					System.out.println("movf (wRegister) " + wRegister);
+				}
+				if(destBit == 1)
+				{
+					datenspeicher[dec] = datenspeicher[dec];
+					System.out.println("movf (f-register) " + datenspeicher[dec]);
+				}
 			} else if ((befehl >= 100100000000L) && (befehl <= 100111111111L)) {
-				System.out.println("comf");
+				String kString = getLiterals(befehl, 7);
+				int dec = Integer.parseInt(kString, 2);
+				String dBit = getDBit(befehl, 7); //Hole siebtes Element aus var befehl
+				int destBit = Integer.parseInt(dBit, 2);
+				long tp = negator(datenspeicher[dec], 7);
+				
+				if(destBit == 0)
+				{
+					
+					wRegister =  tp;
+					System.out.println("comf (w-Register) " + wRegister);
+				}
+				if(destBit == 1)
+				{
+					datenspeicher[dec] = tp;
+					System.out.println("comf (f-register) " + datenspeicher[dec]);
+				}
 			} else if ((befehl >= 101000000000L) && (befehl <= 101011111111L)) {
-				System.out.println("incf");
+				String kString = getLiterals(befehl, 7);
+				int dec = Integer.parseInt(kString, 2);
+				String dBit = getDBit(befehl, 7); //Hole siebtes Element aus var befehl
+				int destBit = Integer.parseInt(dBit, 2);
+				if(destBit == 0)
+				{
+					long temp = datenspeicher[dec] + 1;
+					wRegister = Math.floorMod(temp,256);
+					System.out.println("incf (w-Register) " + wRegister);
+				}
+				if(destBit == 1)
+				{
+					long temp = datenspeicher[dec] + 1;
+					datenspeicher[dec] = Math.floorMod(temp,256);
+					System.out.println("incf (f-register) " + datenspeicher[dec]);
+				}
 			} else if ((befehl >= 101100000000L) && (befehl <= 101111111111L)) {
 				System.out.println("decfsz");
 			} else if ((befehl >= 110000000000L) && (befehl <= 110011111111L)) {
@@ -121,7 +226,20 @@ public class Simulation {
 			} else if ((befehl >= 110100000000L) && (befehl <= 110111111111L)) {
 				System.out.println("rlf");
 			} else if ((befehl >= 111000000000L) && (befehl <= 111011111111L)) {
-				System.out.println("swapf");
+				String kString = swapNibble(befehl, 8);
+				int dec = Integer.parseInt(kString, 2);
+				String dBit = getDBit(befehl, 7); //Hole siebtes Element aus var befehl
+				int destBit = Integer.parseInt(dBit, 2);
+				if(destBit == 0)
+				{
+					wRegister = datenspeicher[dec];
+					System.out.println("swapf (w-Register) " + wRegister);
+				}
+				if(destBit == 1)
+				{
+					datenspeicher[dec] = datenspeicher[dec];
+					System.out.println("swapf (f-register) " + datenspeicher[dec]);
+				}
 			} else if ((befehl >= 111100000000L) && (befehl <= 111111111111L)) {
 				System.out.println("incfsz");
 			} else if ((befehl >= 1000000000000L) && (befehl <= 1001111111111L)) {
@@ -198,18 +316,75 @@ public class Simulation {
 		}
 	}
 
+	public static String getDBit(long binary, int length) {
+		String kString = "" + binary;
+		int pos = (kString.length()-length-1);
+		long kArray[] = new long[kString.length()];
+		String dBit = "";
+		kArray[pos] = Long.parseLong(kString.substring(pos, pos + 1));
+		dBit = dBit + kArray[pos];
+		return dBit;
+	}
+	
 	public static String getLiterals(long binary, int length) {
 		String kString = "" + binary;
 		long kArray[] = new long[kString.length()];
 		String sLiteral = "";
-		for (int j = 6; j <= kString.length(); j++) {
-			if (j != kString.length()) {
-				kArray[j] = Long.parseLong(kString.substring(j, j + 1));
-				sLiteral = sLiteral + kArray[j];
+		int count = 0;
+		for (int j = kString.length()-length; j <= kString.length(); j++) {
+			if(j!=kString.length()) {
+				kArray[count] = Long.parseLong(kString.substring(j, j + 1));
+				sLiteral = sLiteral + kArray[count];
+				count++;
 			}
 		}
 		return sLiteral;
 	}
+	
+	public static String swapNibble(long binary, int length) {
+		String kString = "" + binary;
+		long kArray[] = new long[kString.length()];
+		String nibble1 = "";
+		String nibble2 = "";
+		int count = 0;
+		for (int j = kString.length()-length; j <= kString.length()-4; j++) {
+			if(j!=kString.length()) {
+				kArray[count] = Long.parseLong(kString.substring(j, j + 1));
+				nibble1 = nibble1 + kArray[count];
+				count++;
+			}
+		}
+		for (int j = kString.length()-4; j <= kString.length(); j++) {
+			if(j!=kString.length()) {
+				kArray[count] = Long.parseLong(kString.substring(j, j + 1));
+				nibble2 = nibble2 + kArray[count];
+				count++;
+			}
+		}
+		String swpNi = nibble2 + nibble1;
+		return swpNi;
+	}
+	
+	public static long negator(long value, int length) {
+		String tempS = "";
+		String binary = Long.toBinaryString(value);
+		int temp = length-binary.length()+1;
+		for(int i=0; i<temp;i++) {
+			tempS += "1";
+		}
+		for(int i=0; i<binary.length(); i++) {
+			String test = binary.substring(i, i+1);
+			if((binary.substring(i, i + 1)).equals("0")) {
+				tempS += "1";
+			}else {
+				tempS += "0";
+			}
+		}
+		long reVal = Long.parseLong(tempS, 2);
+		return reVal;
+	}
+	
+	
 
 	public static int push(long adresse, int pointer) {
 		if (pointer > 7) {
