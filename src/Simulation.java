@@ -5,12 +5,14 @@ import java.util.Scanner;
 public class Simulation {
 	static long[] stack = new long[8];
 	static int stPointer;
+	static int cFlag = 0;
 
 	public static void main(String[] args) throws FileNotFoundException {
 		long wRegister = 0;
 		long[] befehlsspeicher = new long[1024]; // Befehlsspeicher mit der Größe 1024.
 		long[] datenspeicher = new long[256]; // Datenspeicher mit der Größe 256.
 		int zBit = 0;
+		
 
 		for (int i = 0; i < 8; i++) {
 			stack[i] = -1;
@@ -177,7 +179,8 @@ public class Simulation {
 				String dBit = getDBit(befehl, 7); // Hole siebtes Element aus var befehl
 				int destBit = Integer.parseInt(dBit, 2);
 				if (destBit == 0) {
-					wRegister = wRegister + datenspeicher[dec];
+					long temp = wRegister + datenspeicher[dec];
+					wRegister = Math.floorMod(temp, 256);
 					System.out.println("addwf (w-Register) " + wRegister);
 				}
 				if (destBit == 1) {
@@ -229,11 +232,54 @@ public class Simulation {
 					System.out.println("incf (f-register) " + datenspeicher[dec]);
 				}
 			} else if ((befehl >= 101100000000L) && (befehl <= 101111111111L)) {
-				System.out.println("decfsz");
+				String kString = getLiterals(befehl, 7);
+				int dec = Integer.parseInt(kString, 2);
+				String dBit = getDBit(befehl, 7); // Hole siebtes Element aus var befehl
+				int destBit = Integer.parseInt(dBit, 2);
+				if (destBit == 0) {
+					long temp = datenspeicher[dec] - 1;
+					wRegister = Math.floorMod(temp, 256);
+					System.out.println("decfsz (w-Register) " + wRegister);
+				}
+				if (destBit == 1) {
+					long temp = datenspeicher[dec] - 1;
+					datenspeicher[dec] = Math.floorMod(temp, 256);
+					System.out.println("decfsz (f-register) " + datenspeicher[dec]);
+				}
+				if(datenspeicher[dec] == 0) {
+					i++;
+					System.out.println("nop");
+				}
 			} else if ((befehl >= 110000000000L) && (befehl <= 110011111111L)) {
-				System.out.println("rrf");
+				String kString = getLiterals(befehl, 7);
+				int dec = Integer.parseInt(kString, 2);
+				String dBit = getDBit(befehl, 7); // Hole siebtes Element aus var befehl
+				int destBit = Integer.parseInt(dBit, 2);
+				long tp = shiftRight(datenspeicher[dec], 7);
+
+				if (destBit == 0) {
+					wRegister = tp;
+					System.out.println("rrf (w-Register) " + wRegister + " cFlag: " + cFlag);
+				}
+				if (destBit == 1) {
+					datenspeicher[dec] = tp;
+					System.out.println("rrf (f-register) " + datenspeicher[dec] + " cFlag: " + cFlag);
+				}
 			} else if ((befehl >= 110100000000L) && (befehl <= 110111111111L)) {
-				System.out.println("rlf");
+				String kString = getLiterals(befehl, 7);
+				int dec = Integer.parseInt(kString, 2);
+				String dBit = getDBit(befehl, 7); // Hole siebtes Element aus var befehl
+				int destBit = Integer.parseInt(dBit, 2);
+				long tp = shiftLeft(datenspeicher[dec], 7);
+
+				if (destBit == 0) {
+					wRegister = tp;
+					System.out.println("rlf (w-Register) " + wRegister + " cFlag: " + cFlag);
+				}
+				if (destBit == 1) {
+					datenspeicher[dec] = tp;
+					System.out.println("rlf (f-register) " + datenspeicher[dec] + " cFlag: " + cFlag);
+				}
 			} else if ((befehl >= 111000000000L) && (befehl <= 111011111111L)) {
 				String kString = getLiterals(befehl, 7);
 				int dec = Integer.parseInt(kString, 2);
@@ -248,10 +294,28 @@ public class Simulation {
 					System.out.println("swapf (f-register) " + datenspeicher[dec]);
 				}
 			} else if ((befehl >= 111100000000L) && (befehl <= 111111111111L)) {
-				System.out.println("incfsz");
+				String kString = getLiterals(befehl, 7);
+				int dec = Integer.parseInt(kString, 2);
+				String dBit = getDBit(befehl, 7); // Hole siebtes Element aus var befehl
+				int destBit = Integer.parseInt(dBit, 2);
+				if (destBit == 0) {
+					long temp = datenspeicher[dec] + 1;
+					wRegister = Math.floorMod(temp, 256);
+					System.out.println("incfsz (w-Register) " + wRegister);
+				}
+				if (destBit == 1) {
+					long temp = datenspeicher[dec] + 1;
+					datenspeicher[dec] = Math.floorMod(temp, 256);
+					System.out.println("incfsz (f-register) " + datenspeicher[dec]);
+				}
+				if(datenspeicher[dec] == 0) {
+					i++;
+					System.out.println("nop");
+				}
 			} else if ((befehl >= 1000000000000L) && (befehl <= 1001111111111L)) {
 				System.out.println("bcf");
 			} else if ((befehl >= 1010000000000L) && (befehl <= 1011111111111L)) {
+				
 				System.out.println("bsf");
 			} else if ((befehl >= 1100000000000L) && (befehl <= 1101111111111L)) {
 				System.out.println("btfsc");
@@ -351,17 +415,17 @@ public class Simulation {
 	public static long swapNibble(long dec) {
 		String kString = Long.toBinaryString(dec);
 		long kArray[] = new long[8];
-		while(kString.length() != 8) {
+		while (kString.length() != 8) {
 			String temp = "0";
 			kString = temp + kString;
 		}
 		String nibble1 = "";
 		String nibble2 = "";
-		for(int i = 0; i < 4; i++) {
+		for (int i = 0; i < 4; i++) {
 			kArray[i] = Long.parseLong(kString.substring(i, i + 1));
 			nibble1 += kArray[i];
 		}
-		for(int i = 4; i < 8; i++) {
+		for (int i = 4; i < 8; i++) {
 			kArray[i] = Long.parseLong(kString.substring(i, i + 1));
 			nibble2 += kArray[i];
 		}
@@ -387,6 +451,44 @@ public class Simulation {
 		}
 		long reVal = Long.parseLong(tempS, 2);
 		return reVal;
+	}
+	
+	public static long shiftLeft(long value, int length) {
+		String binary = Long.toBinaryString(value);
+		int temp = length - binary.length() + 1;
+		for (int i = 0; i < temp; i++) {
+			binary = "0" + binary;
+		}
+		String cFlagString = binary.substring(0, 1);
+		cFlag = Integer.parseInt(cFlagString);
+		String tempBinary = "";
+		for(int i = 1; i < 8; i++) {
+			tempBinary += binary.substring(i, i + 1);
+		}
+		binary = tempBinary;
+		String rightSide = Integer.toString(cFlag);
+		binary += rightSide;
+		long retVal = Long.parseLong(binary, 2);
+		return retVal;
+	}
+	
+	public static long shiftRight(long value, int length) {
+		String binary = Long.toBinaryString(value);
+		int temp = length - binary.length() + 1;
+		for (int i = 0; i < temp; i++) {
+			binary = "0" + binary;
+		}
+		String cFlagString = binary.substring(7);
+		cFlag = Integer.parseInt(cFlagString);
+		String tempBinary = "";
+		for(int i = 0; i < 7; i++) {
+			tempBinary += binary.substring(i, i + 1);
+		}
+		binary = tempBinary;
+		String leftSide = Integer.toString(cFlag);
+		binary = leftSide + binary;
+		long retVal = Long.parseLong(binary, 2);
+		return retVal;
 	}
 
 	public static int push(long adresse, int pointer) {
