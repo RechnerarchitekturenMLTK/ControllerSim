@@ -288,29 +288,39 @@ public class Simulation {
 			} else if ((befehl >= 110000000000L) && (befehl <= 110011111111L)) {
 				String kString = getLiterals(befehl, 7);
 				int dec = Integer.parseInt(kString, 2);
-				String dBit = getDBit(befehl, 7); // Hole siebtes Element aus var befehl
+				String dBit = getDBit(befehl, 7); 
 				int destBit = Integer.parseInt(dBit, 2);
 				long tp = 0;
-				
-				// TODO
-				
 				if (datenspeicher[4] != 0 && dec != 12 && dec != 13) {
 					if (dec == 4) {
 						tp = shiftRight(datenspeicher[4], 7);
+						if (destBit == 0) {
+							wRegister = tp;
+							System.out.println("rrf (w-Register) " + wRegister + " cFlag: " + cFlag);
+						} else if (destBit == 1) {
+							datenspeicher[4] = tp;
+							System.out.println("rrf (f-register) " + datenspeicher[4] + " cFlag: " + cFlag);
+						}
 					} else {
 						long t = datenspeicher[4];
 						tp = shiftRight(datenspeicher[(int) t], 7);
+						if (destBit == 0) {
+							wRegister = tp;
+							System.out.println("rrf (w-Register) " + wRegister + " cFlag: " + cFlag);
+						} else if (destBit == 1) {
+							datenspeicher[(int) t] = tp;
+							System.out.println("rrf (f-register) " + datenspeicher[(int) t] + " cFlag: " + cFlag);
+						}
 					}
 				} else {
 					tp = shiftRight(datenspeicher[dec], 7);
-				}
-				if (destBit == 0) {
-					wRegister = tp;
-					System.out.println("rrf (w-Register) " + wRegister + " cFlag: " + cFlag);
-				}
-				if (destBit == 1) {
-					datenspeicher[dec] = tp;
-					System.out.println("rrf (f-register) " + datenspeicher[dec] + " cFlag: " + cFlag);
+					if (destBit == 0) {
+						wRegister = tp;
+						System.out.println("rrf (w-Register) " + wRegister + " cFlag: " + cFlag);
+					} else if (destBit == 1) {
+						datenspeicher[dec] = tp;
+						System.out.println("rrf (f-register) " + datenspeicher[dec] + " cFlag: " + cFlag);
+					}
 				}
 			} else if ((befehl >= 110100000000L) && (befehl <= 110111111111L)) {
 				String kString = getLiterals(befehl, 7);
