@@ -1,17 +1,21 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 
 public class Simulation {
 	static long[] stack = new long[8];
 	static int stPointer;
 	static int cFlag = 0;
+	static long wRegister = 0;
+	static long[] befehlsspeicher = new long[1024]; // Befehlsspeicher mit der Größe 1024.
+	static long[] datenspeicher = new long[256]; // Datenspeicher mit der Größe 256.
+	static int zBit = 0;
 
 	public static void main(String[] args) throws FileNotFoundException {
-		long wRegister = 0;
-		long[] befehlsspeicher = new long[1024]; // Befehlsspeicher mit der Größe 1024.
-		long[] datenspeicher = new long[256]; // Datenspeicher mit der Größe 256.
-		int zBit = 0;
 
 		for (int i = 0; i < 8; i++) {
 			stack[i] = -1;
@@ -288,7 +292,7 @@ public class Simulation {
 			} else if ((befehl >= 110000000000L) && (befehl <= 110011111111L)) {
 				String kString = getLiterals(befehl, 7);
 				int dec = Integer.parseInt(kString, 2);
-				String dBit = getDBit(befehl, 7); 
+				String dBit = getDBit(befehl, 7);
 				int destBit = Integer.parseInt(dBit, 2);
 				long tp = 0;
 				if (datenspeicher[4] != 0 && dec != 12 && dec != 13) {
@@ -510,8 +514,26 @@ public class Simulation {
 			} else if (befehl == 1100011L) {
 				System.out.println("sleep");
 			}
+			dateiSchreiben();
+			
 		}
 	}
+	
+	public static void dateiSchreiben() {
+        PrintWriter pWriter = null;
+        try {
+            pWriter = new PrintWriter(new BufferedWriter(new FileWriter("gui_set.dat")));
+            pWriter.println("Stack ");
+            pWriter.println("Test2");
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        } finally {
+            if (pWriter != null){
+                pWriter.flush();
+                pWriter.close();
+            }
+        }
+    }
 
 	public static String getDBit(long binary, int length) {
 		String kString = "" + binary;
