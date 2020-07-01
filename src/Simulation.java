@@ -14,6 +14,7 @@ public class Simulation {
 	static long[] befehlsspeicher = new long[1024]; // Befehlsspeicher mit der Größe 1024.
 	static long[] datenspeicher = new long[256]; // Datenspeicher mit der Größe 256.
 	static int zBit = 0;
+	static int TMR0 = 0;
 
 	public static void main(String[] args) throws FileNotFoundException {
 
@@ -81,7 +82,10 @@ public class Simulation {
 		}
 		scan.close(); // Falls die while() bedingung oben nicht erfüllt, wird der Scanvorgang beendet.
 
+		vorteilerSchreiben();
+		int counter = 0;
 		for (int i = 0; i < befehlsspeicher.length; i++) {
+			
 			long befehl = befehlsspeicher[i];
 
 			if ((befehl >= 11000000000000L) && (befehl <= 11001111111111L)) {
@@ -90,6 +94,7 @@ public class Simulation {
 				kString = getLiterals(befehl, 8);
 				k = Integer.parseInt(kString, 2);
 				wRegister = k;
+				wRegister = Math.floorMod(wRegister, 256);
 				System.out.println("movlw: " + wRegister); // MOVLW
 			} else if ((befehl == 0L) || (befehl == 100000L) || (befehl == 1000000L) || (befehl == 1100000L)) {
 				System.out.println("nop");
@@ -117,6 +122,7 @@ public class Simulation {
 				System.out.println("clrf " + datenspeicher[dec] + " Zbit: " + zBit);
 			} else if ((befehl >= 100000000L) && (befehl <= 101111111L)) {
 				wRegister = 0;
+				zBit = 1;
 				System.out.println("clrw (wRegister) " + wRegister);
 			} else if ((befehl >= 1000000000L) && (befehl <= 1011111111L)) {
 				String kString = getLiterals(befehl, 7);
@@ -125,11 +131,35 @@ public class Simulation {
 				int destBit = Integer.parseInt(dBit, 2);
 				if (destBit == 0) {
 					long temp = datenspeicher[dec] - wRegister;
+					if(wRegister == 0) {
+						zBit = 1;
+						cFlag = 1;
+					}
+					else if(wRegister > 0) {
+						zBit = 0;
+						cFlag = 1;
+					}
+					else {
+						zBit = 0;
+						cFlag = 0;
+					}
 					wRegister = Math.floorMod(temp, 256);
 					System.out.println("subwf (wRegister) " + wRegister);
 				}
 				if (destBit == 1) {
 					long temp = datenspeicher[dec] - wRegister;
+					if(datenspeicher[dec] == 0) {
+						zBit = 1;
+						cFlag = 1;
+					}
+					else if(datenspeicher[dec] > 0) {
+						zBit = 0;
+						cFlag = 1;
+					}
+					else {
+						zBit = 0;
+						cFlag = 0;
+					}
 					datenspeicher[dec] = Math.floorMod(temp, 256);
 					System.out.println("subwf (f-register) " + datenspeicher[dec]);
 				}
@@ -141,11 +171,23 @@ public class Simulation {
 				if (destBit == 0) {
 					long temp = datenspeicher[dec] - 1;
 					wRegister = Math.floorMod(temp, 256);
+					if(wRegister == 0) {
+						zBit = 1;
+					}
+					else {
+						zBit = 0;
+					}
 					System.out.println("decf (w-Register) " + wRegister);
 				}
 				if (destBit == 1) {
 					long temp = datenspeicher[dec] - 1;
 					datenspeicher[dec] = Math.floorMod(temp, 256);
+					if(datenspeicher[dec] == 0) {
+						zBit = 1;
+					}
+					else {
+						zBit = 0;
+					}
 					System.out.println("decf (f-register) " + datenspeicher[dec]);
 				}
 			} else if ((befehl >= 10000000000L) && (befehl <= 10011111111L)) {
@@ -155,10 +197,24 @@ public class Simulation {
 				int destBit = Integer.parseInt(dBit, 2);
 				if (destBit == 0) {
 					wRegister = wRegister | datenspeicher[dec];
+					wRegister = Math.floorMod(wRegister, 256);
+					if(wRegister == 0) {
+						zBit = 1;
+					}
+					else {
+						zBit = 0;
+					}
 					System.out.println("iorwf (wRegister) " + wRegister);
 				}
 				if (destBit == 1) {
 					datenspeicher[dec] = wRegister | datenspeicher[dec];
+					datenspeicher[dec] = Math.floorMod(datenspeicher[dec], 256);
+					if(datenspeicher[dec] == 0) {
+						zBit = 1;
+					}
+					else {
+						zBit = 0;
+					}
 					System.out.println("iorwf (f-register) " + datenspeicher[dec]);
 				}
 			} else if ((befehl >= 10100000000L) && (befehl <= 10111111111L)) {
@@ -168,10 +224,24 @@ public class Simulation {
 				int destBit = Integer.parseInt(dBit, 2);
 				if (destBit == 0) {
 					wRegister = wRegister & datenspeicher[dec];
+					wRegister = Math.floorMod(wRegister, 256);
+					if(wRegister == 0) {
+						zBit = 1;
+					}
+					else {
+						zBit = 0;
+					}
 					System.out.println("andwf (wRegister) " + wRegister);
 				}
 				if (destBit == 1) {
 					datenspeicher[dec] = wRegister & datenspeicher[dec];
+					datenspeicher[dec] = Math.floorMod(datenspeicher[dec], 256);
+					if(datenspeicher[dec] == 0) {
+						zBit = 1;
+					}
+					else {
+						zBit = 0;
+					}
 					System.out.println("andwf (f-register) " + datenspeicher[dec]);
 				}
 			} else if ((befehl >= 11000000000L) && (befehl <= 11011111111L)) {
@@ -181,10 +251,24 @@ public class Simulation {
 				int destBit = Integer.parseInt(dBit, 2);
 				if (destBit == 0) {
 					wRegister = (wRegister ^ datenspeicher[dec]);
+					wRegister = Math.floorMod(wRegister, 256);
+					if(wRegister == 0) {
+						zBit = 1;
+					}
+					else {
+						zBit = 0;
+					}
 					System.out.println("xorwf (w-Register) " + wRegister);
 				}
 				if (destBit == 1) {
 					datenspeicher[dec] = (wRegister ^ datenspeicher[dec]);
+					datenspeicher[dec] = Math.floorMod(datenspeicher[dec], 256);
+					if(datenspeicher[dec] == 0) {
+						zBit = 1;
+					}
+					else {
+						zBit = 0;
+					}
 					System.out.println("xorwf (f-register) " + datenspeicher[dec]);
 				}
 			} else if ((befehl >= 11100000000L) && (befehl <= 11111111111L)) {
@@ -195,35 +279,109 @@ public class Simulation {
 				if (destBit == 0) {
 					if (datenspeicher[4] != 0 && dec != 12 && dec != 13) {
 						if (dec == 4) {
-							long temp = wRegister + datenspeicher[4];
-							wRegister = Math.floorMod(temp, 256);
+							wRegister = wRegister + datenspeicher[4];
+							if(wRegister == 0) {
+								zBit = 1;
+							}
+							else {
+								zBit = 0;
+							}
+							if(wRegister > 255) {
+								cFlag = 1;
+							}
+							else {
+								cFlag = 0;
+							}
+							wRegister = Math.floorMod(wRegister, 256);
 							System.out.println("addwf (w-Register) " + wRegister);
 						} else {
 							long t = datenspeicher[4];
-							long temp = wRegister + datenspeicher[(int) t];
-							wRegister = Math.floorMod(temp, 256);
+							wRegister = wRegister + datenspeicher[(int) t];
+							if(wRegister == 0) {
+								zBit = 1;
+							}
+							else {
+								zBit = 0;
+							}
+							if(wRegister > 255) {
+								cFlag = 1;
+							}
+							else {
+								cFlag = 0;
+							}
+							wRegister = Math.floorMod(wRegister, 256);
 							System.out.println("addwf (w-Register) " + wRegister);
 						}
 					} else {
 						wRegister = wRegister + datenspeicher[dec];
+						if(wRegister == 0) {
+							zBit = 1;
+						}
+						else {
+							zBit = 0;
+						}
+						if(wRegister > 255) {
+							cFlag = 1;
+						}
+						else {
+							cFlag = 0;
+						}
+						wRegister = Math.floorMod(wRegister, 256);
 						System.out.println("addwf (wRegister) " + wRegister);
 					}
 				}
 				if (destBit == 1) {
 					if (datenspeicher[4] != 0 && dec != 12 && dec != 13) {
 						if (dec == 4) {
-							long temp = wRegister + datenspeicher[4];
-							datenspeicher[4] = Math.floorMod(temp, 256);
-							System.out.println("addwf (f-Register) " + wRegister);
+							datenspeicher[4] = wRegister + datenspeicher[4];
+							if(datenspeicher[4] == 0) {
+								zBit = 1;
+							}
+							else {
+								zBit = 0;
+							}
+							if(datenspeicher[4] > 255) {
+								cFlag = 1;
+							}
+							else {
+								cFlag = 0;
+							}
+							datenspeicher[4] = Math.floorMod(datenspeicher[4], 256);
+							System.out.println("addwf (f-Register) " + datenspeicher[4]);
 						} else {
 							long t = datenspeicher[4];
-							long temp = wRegister + datenspeicher[(int) t];
-							datenspeicher[(int) t] = Math.floorMod(temp, 256);
-							System.out.println("addwf (f-Register) " + wRegister);
+							datenspeicher[(int) t] = wRegister + datenspeicher[(int) t];
+							if(datenspeicher[(int) t] == 0) {
+								zBit = 1;
+							}
+							else {
+								zBit = 0;
+							}
+							if(datenspeicher[(int) t] > 255) {
+								cFlag = 1;
+							}
+							else {
+								cFlag = 0;
+							}
+							datenspeicher[(int) t] = Math.floorMod(datenspeicher[(int) t], 256);
+							System.out.println("addwf (f-Register) " + datenspeicher[(int) t]);
 						}
 					} else {
 						datenspeicher[dec] = wRegister + datenspeicher[dec];
-						System.out.println("addwf (f-Register) " + wRegister);
+						if(datenspeicher[dec] == 0) {
+							zBit = 1;
+						}
+						else {
+							zBit = 0;
+						}
+						if(datenspeicher[dec] > 255) {
+							cFlag = 1;
+						}
+						else {
+							cFlag = 0;
+						}
+						datenspeicher[dec] = Math.floorMod(datenspeicher[dec], 256);
+						System.out.println("addwf (f-Register) " + datenspeicher[dec]);
 					}
 				}
 			} else if ((befehl >= 100000000000L) && (befehl <= 100011111111L)) {
@@ -233,10 +391,24 @@ public class Simulation {
 				int destBit = Integer.parseInt(dBit, 2);
 				if (destBit == 0) {
 					wRegister = datenspeicher[dec];
+					wRegister = Math.floorMod(wRegister, 256);
+					if(wRegister == 0) {
+						zBit = 1;
+					}
+					else {
+						zBit = 0;
+					}
 					System.out.println("movf (wRegister) " + wRegister);
 				}
 				if (destBit == 1) {
 					datenspeicher[dec] = datenspeicher[dec];
+					datenspeicher[dec] = Math.floorMod(datenspeicher[dec], 256);
+					if(datenspeicher[dec] == 0) {
+						zBit = 1;
+					}
+					else {
+						zBit = 0;
+					}
 					System.out.println("movf (f-register) " + datenspeicher[dec]);
 				}
 			} else if ((befehl >= 100100000000L) && (befehl <= 100111111111L)) {
@@ -245,14 +417,26 @@ public class Simulation {
 				String dBit = getDBit(befehl, 7); // Hole siebtes Element aus var befehl
 				int destBit = Integer.parseInt(dBit, 2);
 				long tp = negator(datenspeicher[dec], 7);
-
 				if (destBit == 0) {
-
 					wRegister = tp;
+					wRegister = Math.floorMod(wRegister, 256);
+					if(wRegister == 0) {
+						zBit = 1;
+					}
+					else {
+						zBit = 0;
+					}
 					System.out.println("comf (w-Register) " + wRegister);
 				}
 				if (destBit == 1) {
 					datenspeicher[dec] = tp;
+					datenspeicher[dec] = Math.floorMod(datenspeicher[dec], 256);
+					if(datenspeicher[dec] == 0) {
+						zBit = 1;
+					}
+					else {
+						zBit = 0;
+					}
 					System.out.println("comf (f-register) " + datenspeicher[dec]);
 				}
 			} else if ((befehl >= 101000000000L) && (befehl <= 101011111111L)) {
@@ -263,11 +447,23 @@ public class Simulation {
 				if (destBit == 0) {
 					long temp = datenspeicher[dec] + 1;
 					wRegister = Math.floorMod(temp, 256);
+					if(wRegister == 0) {
+						zBit = 1;
+					}
+					else {
+						zBit = 0;
+					}
 					System.out.println("incf (w-Register) " + wRegister);
 				}
 				if (destBit == 1) {
 					long temp = datenspeicher[dec] + 1;
 					datenspeicher[dec] = Math.floorMod(temp, 256);
+					if(datenspeicher[dec] == 0) {
+						zBit = 1;
+					}
+					else {
+						zBit = 0;
+					}
 					System.out.println("incf (f-register) " + datenspeicher[dec]);
 				}
 			} else if ((befehl >= 101100000000L) && (befehl <= 101111111111L)) {
@@ -287,6 +483,7 @@ public class Simulation {
 				}
 				if (datenspeicher[dec] == 0) {
 					i++;
+					counter += 2;
 					System.out.println("nop");
 				}
 			} else if ((befehl >= 110000000000L) && (befehl <= 110011111111L)) {
@@ -300,9 +497,11 @@ public class Simulation {
 						tp = shiftRight(datenspeicher[4], 7);
 						if (destBit == 0) {
 							wRegister = tp;
+							wRegister = Math.floorMod(wRegister, 256);
 							System.out.println("rrf (w-Register) " + wRegister + " cFlag: " + cFlag);
 						} else if (destBit == 1) {
 							datenspeicher[4] = tp;
+							datenspeicher[4] = Math.floorMod(datenspeicher[4], 256);
 							System.out.println("rrf (f-register) " + datenspeicher[4] + " cFlag: " + cFlag);
 						}
 					} else {
@@ -310,9 +509,11 @@ public class Simulation {
 						tp = shiftRight(datenspeicher[(int) t], 7);
 						if (destBit == 0) {
 							wRegister = tp;
+							wRegister = Math.floorMod(wRegister, 256);
 							System.out.println("rrf (w-Register) " + wRegister + " cFlag: " + cFlag);
 						} else if (destBit == 1) {
 							datenspeicher[(int) t] = tp;
+							datenspeicher[(int) t] = Math.floorMod(datenspeicher[(int) t], 256);
 							System.out.println("rrf (f-register) " + datenspeicher[(int) t] + " cFlag: " + cFlag);
 						}
 					}
@@ -320,9 +521,11 @@ public class Simulation {
 					tp = shiftRight(datenspeicher[dec], 7);
 					if (destBit == 0) {
 						wRegister = tp;
+						wRegister = Math.floorMod(wRegister, 256);
 						System.out.println("rrf (w-Register) " + wRegister + " cFlag: " + cFlag);
 					} else if (destBit == 1) {
 						datenspeicher[dec] = tp;
+						datenspeicher[dec] = Math.floorMod(datenspeicher[dec], 256);
 						System.out.println("rrf (f-register) " + datenspeicher[dec] + " cFlag: " + cFlag);
 					}
 				}
@@ -335,10 +538,12 @@ public class Simulation {
 
 				if (destBit == 0) {
 					wRegister = tp;
+					wRegister = Math.floorMod(wRegister, 256);
 					System.out.println("rlf (w-Register) " + wRegister + " cFlag: " + cFlag);
 				}
 				if (destBit == 1) {
 					datenspeicher[dec] = tp;
+					datenspeicher[dec] = Math.floorMod(datenspeicher[dec], 256);
 					System.out.println("rlf (f-register) " + datenspeicher[dec] + " cFlag: " + cFlag);
 				}
 			} else if ((befehl >= 111000000000L) && (befehl <= 111011111111L)) {
@@ -348,10 +553,12 @@ public class Simulation {
 				int destBit = Integer.parseInt(dBit, 2);
 				if (destBit == 0) {
 					wRegister = swapNibble(datenspeicher[dec]);
+					wRegister = Math.floorMod(wRegister, 256);
 					System.out.println("swapf (w-Register) " + wRegister);
 				}
 				if (destBit == 1) {
 					datenspeicher[dec] = swapNibble(datenspeicher[dec]);
+					datenspeicher[dec] = Math.floorMod(datenspeicher[dec], 256);
 					System.out.println("swapf (f-register) " + datenspeicher[dec]);
 				}
 			} else if ((befehl >= 111100000000L) && (befehl <= 111111111111L)) {
@@ -371,6 +578,7 @@ public class Simulation {
 				}
 				if (datenspeicher[dec] == 0) {
 					i++;
+					counter += 2;
 					System.out.println("nop");
 				}
 			} else if ((befehl >= 1000000000000L) && (befehl <= 1001111111111L)) {
@@ -393,6 +601,7 @@ public class Simulation {
 					}
 				}
 				datenspeicher[dec] = Long.parseLong(temp, 2);
+				datenspeicher[dec] = Math.floorMod(datenspeicher[dec], 256);
 				System.out.println("bcf: " + datenspeicher[dec]);
 			} else if ((befehl >= 1010000000000L) && (befehl <= 1011111111111L)) {
 				String kString = getLiterals(befehl, 7);
@@ -414,6 +623,7 @@ public class Simulation {
 					}
 				}
 				datenspeicher[dec] = Long.parseLong(temp, 2);
+				datenspeicher[dec] = Math.floorMod(datenspeicher[dec], 256);
 				System.out.println("bsf: " + datenspeicher[dec]);
 			} else if ((befehl >= 1100000000000L) && (befehl <= 1101111111111L)) {
 				String kString = getLiterals(befehl, 7);
@@ -428,6 +638,7 @@ public class Simulation {
 				}
 				if (sBefehl.substring(index, index + 1).equals("0")) {
 					i++;
+					counter += 2;
 					System.out.println("btfsc: " + datenspeicher[dec]);
 					System.out.println("nop");
 				} else {
@@ -446,6 +657,7 @@ public class Simulation {
 				}
 				if (sBefehl.substring(index, index + 1).equals("1")) {
 					i++;
+					counter += 2;
 					System.out.println("btfss: " + datenspeicher[dec]);
 					System.out.println("nop");
 				} else {
@@ -457,12 +669,14 @@ public class Simulation {
 				String kString = getLiterals(befehl, 11);
 				int literals = Integer.parseInt(kString, 2);
 				i = literals;
+				counter++;
 				i--;
 				System.out.println("call: " + literals);
 
 			} else if ((befehl >= 10100000000000L) && (befehl <= 10111111111111L)) {
 				String kString = getLiterals(befehl, 10);
 				int dec = Integer.parseInt(kString, 2);
+				counter++;
 				if (i == dec) {
 					System.out.println("GOTO ENDE");
 					break;
@@ -475,47 +689,101 @@ public class Simulation {
 				wRegister = dec;
 				stPointer--;
 				i = pop(stPointer);
+				counter++;
 				i--;
 				System.out.println("retlw: " + wRegister);
 			} else if ((befehl >= 11100000000000L) && (befehl <= 11100011111111L)) {
 				String kString = getLiterals(befehl, 8);
 				long dec = Long.parseLong(kString, 2);
 				wRegister = (dec | wRegister);
+				wRegister = Math.floorMod(wRegister, 256);
+				if(wRegister == 0) {
+					zBit = 1;
+				}
+				else {
+					zBit = 0;
+				}
 				System.out.println("iorlw: " + wRegister);
 			} else if ((befehl >= 11100100000000L) && (befehl <= 11100111111111L)) {
 				String kString = getLiterals(befehl, 8);
 				long dec = Long.parseLong(kString, 2);
 				wRegister = (dec & wRegister);
+				wRegister = Math.floorMod(wRegister, 256);
+				if(wRegister == 0) {
+					zBit = 1;
+				}
+				else {
+					zBit = 0;
+				}
 				System.out.println("andlw: " + wRegister);
 			} else if ((befehl >= 11101000000000L) && (befehl <= 11101011111111L)) {
 				String kString = getLiterals(befehl, 8);
 				long dec = Long.parseLong(kString, 2);
 				wRegister = (dec ^ wRegister);
+				wRegister = Math.floorMod(wRegister, 256);
+				if(wRegister == 0) {
+					zBit = 1;
+				}
+				else {
+					zBit = 0;
+				}
 				System.out.println("xorlw: " + wRegister);
 			} else if ((befehl >= 11110000000000L) && (befehl <= 11110111111111L)) {
 				String kString = getLiterals(befehl, 8);
 				long dec = Long.parseLong(kString, 2);
 				wRegister = dec - wRegister;
+				if(wRegister == 0) {
+					zBit = 1;
+					cFlag = 1;
+				}
+				else if(wRegister > 0) {
+					zBit = 0;
+					cFlag = 1;
+				}
+				else {
+					zBit = 0;
+					cFlag = 0;
+				}
+				wRegister = Math.floorMod(wRegister, 256);
 				System.out.println("sublw: " + wRegister);
 			} else if ((befehl >= 11111000000000L) && (befehl <= 11111111111111L)) {
 				String kString = getLiterals(befehl, 8);
 				long dec = Long.parseLong(kString, 2);
 				wRegister = wRegister + dec;
+				if(wRegister == 0) {
+					zBit = 1;
+				}
+				else {
+					zBit = 0;
+				}
+				if(wRegister > 255) {
+					cFlag = 1;
+				}
+				else {
+					cFlag = 0;
+				}
+				wRegister = Math.floorMod(wRegister, 256);
 				System.out.println("addlw: " + wRegister);
 			} else if (befehl == 1000L) {
 				stPointer--;
 				i = pop(stPointer);
+				counter++;
 				i--;
 				System.out.println("return: " + i);
 			} else if (befehl == 1100100L) {
 				System.out.println("clrwdt");
 			} else if (befehl == 1001L) {
+				counter++;
 				System.out.println("retfie");
 			} else if (befehl == 1100011L) {
 				System.out.println("sleep");
 			}
+			counter++;
+			if(counter >= 4) {
+				TMR0++;
+				counter = 0;
+			}
 			dateiSchreiben();
-			
 		}
 	}
 	
@@ -523,8 +791,33 @@ public class Simulation {
         PrintWriter pWriter = null;
         try {
             pWriter = new PrintWriter(new BufferedWriter(new FileWriter("gui_set.dat")));
-            pWriter.println("Stack ");
-            pWriter.println("Test2");
+            pWriter.println("Stack " + stack[0] + "," + stack[1] + ","
+            + stack[2] + "," + stack[3] + "," + stack[4] + "," + stack[5] + ","
+            		+ stack[6] + "," + stack[7] + ",");
+            pWriter.println("WReg " + wRegister);
+            for(int i = 0; i < datenspeicher.length; i++) {
+            	if(datenspeicher[i] != 0) {
+            		pWriter.println("FREG 0x" + i + "," + datenspeicher[i]);
+            	}
+            }
+            pWriter.println("STATUSBIT 0," + cFlag);
+            pWriter.println("STATUSBIT 2," + zBit);
+            pWriter.println("Timer0 " + TMR0);
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        } finally {
+            if (pWriter != null){
+                pWriter.flush();
+                pWriter.close();
+            }
+        }
+    }
+	
+	public static void vorteilerSchreiben() {
+        PrintWriter pWriter = null;
+        try {
+            pWriter = new PrintWriter(new BufferedWriter(new FileWriter("gui_set.dat")));
+            pWriter.println("Prescaler 1:4");
         } catch (IOException ioe) {
             ioe.printStackTrace();
         } finally {
