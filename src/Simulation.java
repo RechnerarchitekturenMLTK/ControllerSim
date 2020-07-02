@@ -17,6 +17,7 @@ public class Simulation {
 	static int TMR0 = 0;
 	static int[] init = new int[256];
 	static int dcFlag = 0;
+	static int teilerFaktor = 2;
 
 	public static void main(String[] args) throws FileNotFoundException {
 
@@ -86,8 +87,6 @@ public class Simulation {
 
 		}
 		scan.close(); // Falls die while() bedingung oben nicht erfüllt, wird der Scanvorgang beendet.
-
-		vorteilerSchreiben();
 		int counter = 0;
 		for (int i = 0; i < befehlsspeicher.length; i++) {
 
@@ -776,9 +775,13 @@ public class Simulation {
 				System.out.println("sleep");
 			}
 			counter++;
-			if (counter >= 4) {
+			if (counter >= teilerFaktor) {
 				TMR0++;
 				TMR0 = Math.floorMod(TMR0, 256);
+				if(TMR0 == 0) {
+					zBit = 1;
+					datenspeicher[3] = 4;
+				}
 				counter = 0;
 			}
 			
@@ -790,6 +793,30 @@ public class Simulation {
 		PrintWriter pWriter = null;
 		try {
 			pWriter = new PrintWriter(new BufferedWriter(new FileWriter("gui_set.dat")));
+			if(datenspeicher[81] == 0) {
+				teilerFaktor = 2;
+			}
+			else if(datenspeicher[81] == 1) {
+				teilerFaktor = 4;
+			}
+			else if(datenspeicher[81] == 2) {
+				teilerFaktor = 8;
+			}
+			else if(datenspeicher[81] == 3) {
+				teilerFaktor = 16;
+			}
+			else if(datenspeicher[81] == 4) {
+				teilerFaktor = 32;
+			}
+			else if(datenspeicher[81] == 5) {
+				teilerFaktor = 64;
+			}
+			else if(datenspeicher[81] == 6) {
+				teilerFaktor = 128;
+			}
+			else if(datenspeicher[81] == 7) {
+				teilerFaktor = 256;
+			}
 			pWriter.println("Stack " + stack[0] + "," + stack[1] + "," + stack[2] + "," + stack[3] + "," + stack[4]
 					+ "," + stack[5] + "," + stack[6] + "," + stack[7] + ",");
 			pWriter.println("WReg " + wRegister);
@@ -804,21 +831,7 @@ public class Simulation {
 			pWriter.println("Timer0 " + TMR0);
 			pWriter.println("OPTION " + datenspeicher[81]);
 			pWriter.println("STATUSBIT 1," + dcFlag);
-		} catch (IOException ioe) {
-			ioe.printStackTrace();
-		} finally {
-			if (pWriter != null) {
-				pWriter.flush();
-				pWriter.close();
-			}
-		}
-	}
-
-	public static void vorteilerSchreiben() {
-		PrintWriter pWriter = null;
-		try {
-			pWriter = new PrintWriter(new BufferedWriter(new FileWriter("gui_set.dat")));
-			pWriter.println("Prescaler 1:4");
+			pWriter.println("Prescaler 1:" + teilerFaktor);
 		} catch (IOException ioe) {
 			ioe.printStackTrace();
 		} finally {
@@ -942,9 +955,9 @@ public class Simulation {
 	}
 
 	public static int pop() {
+		stPointer--;
 		int index = (int) stack[stPointer];
 		stack[stPointer] = -1;
-		stPointer--;
 		return index;
 	}
 	
