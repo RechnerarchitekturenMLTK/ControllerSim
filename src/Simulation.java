@@ -658,6 +658,7 @@ public class Simulation {
 					counter += 2;
 					System.out.println("btfss: " + datenspeicher[dec]);
 					System.out.println("nop");
+					datenspeicher[3] = 0;
 				} else {
 					System.out.println("btfss: " + datenspeicher[dec]);
 				}
