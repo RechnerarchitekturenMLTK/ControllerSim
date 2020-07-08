@@ -21,7 +21,7 @@ public class Simulation {
 	static boolean nextStep = false;
 	static boolean start = false;
 
-	public static void main(String[] args) throws FileNotFoundException {
+	public static void main(String[] args) throws FileNotFoundException, InterruptedException {
 
 		for (int i = 0; i < 8; i++) {
 			stack[i] = -1;
@@ -37,15 +37,13 @@ public class Simulation {
 		String path = pfad.nextLine();
 		pfad.close();
 		changeDat.delete();
-		while(changeDat.exists()) {
-			
-		}
 		File daten = new File(path); // Eine manuell ausgewählte Datei wird dem Programm hinzugefügt.
 
 		changeDat = new File("gui_change.dat");
 		while (!changeDat.exists()) { // Prüft solange bis gui_change.dat vorhanden ist.
 
 		}
+		Thread.sleep(1000);
 		pfad = new Scanner(changeDat);
 		path = pfad.nextLine();
 		pfad.close();
